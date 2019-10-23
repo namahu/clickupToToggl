@@ -1,6 +1,11 @@
 {
   "timeZone": "Asia/Tokyo",
   "dependencies": {
+    "libraries": [{
+      "userSymbol": "Clickup",
+      "libraryId": "1C7AvL6vODVFQTZKS2OvnPsTqoU9Si0nQDCbz7BNF46t8TrRLZIEp7bmM",
+      "version": "4"
+    }]
   },
   "webapp": {
     "access": "ANYONE_ANONYMOUS",
