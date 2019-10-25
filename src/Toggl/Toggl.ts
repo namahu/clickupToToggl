@@ -1,3 +1,18 @@
+interface TimeEntries {
+    description: string;
+    wid: number;
+    pid?: number;
+    tid?: number;
+    billable?: boolean;
+    start: string;
+    stop?: string;
+    duration: number;
+    created_with: string;
+    tags?: string[];
+    duronly?: boolean;
+    at?: string;
+};
+
 class Toggl {
 
     private apiToken: string;
