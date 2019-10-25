@@ -48,8 +48,12 @@ class TogglRequest_ {
         return this.fetchTimeEntryToToggl(path, this.options);
     }
 
-    post(path: string) {
+    post(path: string, obj: TimeEntries) {
         this.options.method = 'post';
+
+        if (obj) {
+            this.options.payload = JSON.stringify(obj);
+        }
         return this.fetchTimeEntryToToggl(path, this.options);
     }
 
