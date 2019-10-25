@@ -21,15 +21,16 @@ function doPost(e) {
 
     const toggl = Toggl.getToggl(togglApiToken);
 
+    let res;
     switch (historyItemAfter.status) {
         case 'in progress':
-            startTimeTrack(taskId);
+            res = startTimeTrack(taskId);
             break;
         case 'Closed':
-            stopTimeTrack(toggl);
+            res = stopTimeTrack(toggl);
             break;
         case 'pause':
-            const res = stopTimeTrack(toggl);
+            res = stopTimeTrack(toggl);
             console.log(res);
             break;
         default:
