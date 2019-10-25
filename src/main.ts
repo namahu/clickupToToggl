@@ -17,6 +17,10 @@ function doPost(e) {
 
     console.log('ここまで来た');
 
+    const togglApiToken: string = PropertiesService.getScriptProperties().getProperty('TOGGL_API_TOKEN');
+
+    const toggl = new Toggl(togglApiToken);
+
     switch (historyItemAfter.status) {
         case 'in progress':
             startTimeTrack(taskId);
@@ -25,7 +29,8 @@ function doPost(e) {
             stopTimeTrack(taskId);
             break;
         case 'pause':
-            stopTimeTrack(taskId);
+            const res = stopTimeTrack(toggl);
+            console.log(res);
             break;
         default:
     }
