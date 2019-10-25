@@ -21,17 +21,17 @@ class Toggl {
         this.apiToken = apiToken;
     }
 
-    startTimeEntry = (obj) => {
+    startTimeEntry = (obj: TimeEntries) => {
         const req = new TogglRequest_(this.apiToken);
         return req.post('time_entries/start', obj);
     }
 
     stopTimeEntry = (timeEntryId: number) => {
-        const endPoint: string = this.createEndPoint(`time_entries/${timeEntryId}/stop`);
+
     }
 
     getRunningTimeEntry = () => {
-        const endPoint: string = this.createEndPoint(`time_entries/current`);
+
     }
 
 };
