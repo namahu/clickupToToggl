@@ -1,3 +1,25 @@
+/**
+ * Clickupから取得したタスクからTogglへのtime entryを作成する
+ *
+ * @param task - Clickup task
+ * @return - toggl time entry
+ *
+ */
+const createTogglTimeEntry = (task) => {
+
+    const getTagDataInTask = (tags): string[] => {
+        if (tags.length === 0) {
+            return [];
+        }
+        return tags.map(tag => tag.name);
+    };
+    return {
+        discription: `${task.name} ${task.id}`,
+        tags: getTagDataInTask(task.tags),
+        created_with: 'ClickupToToggl'
+    };
+};
+
 function doPost(e) {
 
     const params: any = JSON.parse(e.postData.getDataAsString());
@@ -17,13 +39,20 @@ function doPost(e) {
 
     console.log('ここまで来た');
 
-    const togglApiToken: string = PropertiesService.getScriptProperties().getProperty('TOGGL_API_TOKEN');
+    const scriptProperties = PropertiesService.getScriptProperties().getProperties();
+    const togglApiToken: string = scriptProperties.TOGGL_API_TOKEN;
+    const clickupApiToken: string = scriptProperties.CLICKUP_API_TOKEN;
 
     const toggl = Toggl.getToggl(togglApiToken);
 
     let res;
     switch (historyItemAfter.status) {
         case 'in progress':
+            const clickup = Clickup.getClickup(clickupApiToken);
+            // todo: Clickupからtaskを取得
+            const clickupTask = clickup.getTaskByTaskId(taskId);
+            const togglTimeEntry = createTogglTimeEntry(clickupTask);
+            // todo: togglからプロジェクトを取得
             res = startTimeTrack(taskId);
             break;
         case 'Closed':
