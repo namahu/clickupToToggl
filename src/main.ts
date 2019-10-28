@@ -20,9 +20,17 @@ const createTogglTimeEntry = (task) => {
     };
 };
 
+const getTogglAllProjectIdAndName = (toggl) => {
+    const togglCurrentUserData = toggl.getCurrentUser(true);
+    const projects = togglCurrentUserData.data.projects;
+
+    return projects.map(pj => [pj.id, pj.name]);
+};
+
 function doPost(e) {
 
     const params: any = JSON.parse(e.postData.getDataAsString());
+    console.log(params);
 
     if (params.event !== 'taskUpdated') {
         throw new Error('Invalid event.');
@@ -51,9 +59,12 @@ function doPost(e) {
             const clickup = Clickup.getClickup(clickupApiToken);
             // todo: Clickupからtaskを取得
             const clickupTask = clickup.getTaskByTaskId(taskId);
-            const togglTimeEntry = createTogglTimeEntry(clickupTask);
+            const user = toggl.getCurrentUser();
+            // const togglAllProjects = getTogglAllProjectIdAndName(toggl);
+            // const togglTimeEntry = createTogglTimeEntry(clickupTask);
             // todo: togglからプロジェクトを取得
-            res = startTimeTrack(taskId);
+            // res = startTimeTrack(taskId);
+            console.log(user);
             break;
         case 'Closed':
             res = stopTimeTrack(toggl);
@@ -64,7 +75,6 @@ function doPost(e) {
             break;
         default:
     }
-    console.log(params);
 
     return ContentService
         .createTextOutput(JSON.stringify({ 'statusCode': 200 }))
