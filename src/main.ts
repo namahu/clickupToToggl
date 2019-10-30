@@ -5,7 +5,7 @@
  * @return - toggl time entry
  *
  */
-const createTogglTimeEntry = (task) => {
+const createTogglTimeEntry = (task, projects) => {
 
     const getTagDataInTask = (tags): string[] => {
         if (tags.length === 0) {
@@ -13,16 +13,30 @@ const createTogglTimeEntry = (task) => {
         }
         return tags.map(tag => tag.name);
     };
+
+    const getTogglProjectIdFromClickupTask = (list, projects) => {
+        return projects.filter(project => project[1] === list.name);
+    };
+
     return {
-        discription: `${task.name} ${task.id}`,
+        description: `${task.name} - #${task.id}`,
         tags: getTagDataInTask(task.tags),
+        pid: getTogglProjectIdFromClickupTask(task.list, projects)[0][0],
         created_with: 'ClickupToToggl'
     };
+};
+
+const getTogglAllProjectIdAndName = (toggl) => {
+    const togglCurrentUserData = toggl.getCurrentUser(true);
+    const projects = togglCurrentUserData.data.projects;
+
+    return projects.map(pj => [pj.id, pj.name]);
 };
 
 function doPost(e) {
 
     const params: any = JSON.parse(e.postData.getDataAsString());
+    console.log(params);
 
     if (params.event !== 'taskUpdated') {
         throw new Error('Invalid event.');
@@ -37,34 +51,33 @@ function doPost(e) {
     const taskId: string = params.task_id;
     const historyItemAfter = historyItem.after;
 
-    console.log('ここまで来た');
-
     const scriptProperties = PropertiesService.getScriptProperties().getProperties();
     const togglApiToken: string = scriptProperties.TOGGL_API_TOKEN;
     const clickupApiToken: string = scriptProperties.CLICKUP_API_TOKEN;
 
-    const toggl = Toggl.getToggl(togglApiToken);
+    const toggl: Toggl = Toggl.getToggl(togglApiToken);
 
     let res;
     switch (historyItemAfter.status) {
         case 'in progress':
-            const clickup = Clickup.getClickup(clickupApiToken);
-            // todo: Clickupからtaskを取得
+            const clickup: Clickup = Clickup.getClickup(clickupApiToken);
+
             const clickupTask = clickup.getTaskByTaskId(taskId);
-            const togglTimeEntry = createTogglTimeEntry(clickupTask);
-            // todo: togglからプロジェクトを取得
-            res = startTimeTrack(taskId);
+            const togglAllProjects = getTogglAllProjectIdAndName(toggl);
+            const togglTimeEntry = createTogglTimeEntry(clickupTask, togglAllProjects);
+
+            res = startTimeTrack(toggl, togglTimeEntry);
+
             break;
         case 'Closed':
             res = stopTimeTrack(toggl);
             break;
         case 'pause':
             res = stopTimeTrack(toggl);
-            console.log(res);
+
             break;
         default:
     }
-    console.log(params);
 
     return ContentService
         .createTextOutput(JSON.stringify({ 'statusCode': 200 }))
