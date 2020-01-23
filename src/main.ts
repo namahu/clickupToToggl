@@ -19,7 +19,7 @@ const createTogglTimeEntry = (task, projects) => {
     };
 
     return {
-        description: `${task.name} - #${task.id}`,
+        description: task.name,
         tags: getTagDataInTask(task.tags),
         pid: getTogglProjectIdFromClickupTask(task.list, projects)[0][0],
         created_with: 'ClickupToToggl'
