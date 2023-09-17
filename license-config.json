@@ -11,7 +11,9 @@
     "build",
     "dist",
     "src",
-    "test"
+    "test",
+    "rollup.config.mjs",
+    "yarn.lock"
   ],
   "license": "license-header.txt",
   "licenseFormats": {
