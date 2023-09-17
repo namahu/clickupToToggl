@@ -24,7 +24,7 @@ export const createTimeEntryData = (
   return {
     start: new Date(Number(clickup.history_items[0].after.start)).toISOString(),
     stop: new Date(Number(clickup.history_items[0].after.end)).toISOString(),
-    description: clickup.name,
+    description: clickup.name + ' - #' + clickup.task_id,
     tags: clickup.tags,
     created_with: 'clickupToToggl',
     workspace_id,
