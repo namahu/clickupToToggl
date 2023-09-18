@@ -1,6 +1,11 @@
 import { getClickupSpaceBySpaceID, getClickupTaskByTaskID } from './clickup';
 import type { ClickupTimeTrackedEvent } from './clickup';
-import { createTimeEntryData, postTimeEntry, getTogglProjects } from './toggl';
+import {
+  createTimeEntryData,
+  postTimeEntry,
+  getTogglProjects,
+  findTogglProjectIDByClickupSpaceName,
+} from './toggl';
 
 type Properties = {
   [key: string]: string | number;
@@ -34,16 +39,20 @@ function doPost(event: GoogleAppsScript.Events.DoPost) {
     properties.CLICKUP_API_TOKEN
   );
 
-  console.log({ clickupSpace });
-
-  const togglTimeEntry = createTimeEntryData(
-    Object.assign(contents, clickupTask),
-    Number(properties.TOGGL_WORKSPACE_ID)
-  );
-
   const TogglProjects = getTogglProjects(
     properties.TOGGL_WORKSPACE_ID,
     properties.TOGGL_API_TOKEN
+  );
+
+  const togglProjectID = findTogglProjectIDByClickupSpaceName(
+    TogglProjects,
+    clickupSpace.name
+  );
+
+  const togglTimeEntry = createTimeEntryData(
+    Object.assign(contents, clickupTask),
+    Number(properties.TOGGL_WORKSPACE_ID),
+    togglProjectID
   );
 
   const response = postTimeEntry(togglTimeEntry, properties.TOGGL_API_TOKEN);
