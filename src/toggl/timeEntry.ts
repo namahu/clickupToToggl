@@ -20,7 +20,7 @@ type TogglTimeEntry = {
 export const createTimeEntryData = (
   clickup: ClickupTimeTrackedEvent & ClickupTask,
   workspace_id: number,
-  projectID: number
+  projectID: number | undefined
 ): TogglTimeEntry => {
   const timeEntry: TogglTimeEntry = {
     start: new Date(Number(clickup.history_items[0].after.start)).toISOString(),
