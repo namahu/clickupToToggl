@@ -35,6 +35,13 @@ type TogglProject = {
   workspace_id: number;
 };
 
+export const findTogglProjectIDByClickupSpaceName = (
+  projects: TogglProject[],
+  spaceName: string
+): number | undefined => {
+  return projects.find(project => project.name === spaceName)?.id;
+};
+
 export const getTogglProjects = (
   workspace_id: number,
   token: string
