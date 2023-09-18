@@ -1,4 +1,4 @@
-import { getClickupTaskByTaskID } from './clickup';
+import { getClickupSpaceBySpaceID, getClickupTaskByTaskID } from './clickup';
 import type { ClickupTimeTrackedEvent } from './clickup';
 import { createTimeEntryData, postTimeEntry, getTogglProjects } from './toggl';
 
@@ -28,6 +28,13 @@ function doPost(event: GoogleAppsScript.Events.DoPost) {
     taskID,
     properties.CLICKUP_API_TOKEN
   );
+
+  const clickupSpace = getClickupSpaceBySpaceID(
+    clickupTask.space.id,
+    properties.CLICKUP_API_TOKEN
+  );
+
+  console.log({ clickupSpace });
 
   const togglTimeEntry = createTimeEntryData(
     Object.assign(contents, clickupTask),
