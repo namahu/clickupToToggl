@@ -19,9 +19,10 @@ type TogglTimeEntry = {
 
 export const createTimeEntryData = (
   clickup: ClickupTimeTrackedEvent & ClickupTask,
-  workspace_id: number
+  workspace_id: number,
+  projectID: number | undefined
 ): TogglTimeEntry => {
-  return {
+  const timeEntry: TogglTimeEntry = {
     start: new Date(Number(clickup.history_items[0].after.start)).toISOString(),
     stop: new Date(Number(clickup.history_items[0].after.end)).toISOString(),
     description: clickup.name + ' - #' + clickup.task_id,
@@ -29,6 +30,12 @@ export const createTimeEntryData = (
     created_with: 'clickupToToggl',
     workspace_id,
   };
+
+  if (projectID) {
+    timeEntry.project_id = projectID;
+  }
+
+  return timeEntry;
 };
 
 export const postTimeEntry = (timeEntry: TogglTimeEntry, token: string) => {
